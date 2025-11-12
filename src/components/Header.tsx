@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { homePath, ticketsPath } from '@/paths'
 
+import { ThemeSwitcher } from './theme/theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
       w-full flex py-2.5 px-5 justify-between
     "
     >
-      <div>
+      <div className="flex align-items gap-x-2">
         <Button asChild variant="ghost">
           <Link href={homePath()}>
             <LucideKanban />
@@ -23,7 +24,8 @@ const Header = () => {
           </Link>
         </Button>
       </div>
-      <div>
+      <div className="flex align-items gap-x-2">
+        <ThemeSwitcher />
         <Link
           className={buttonVariants({ variant: 'default' })}
           href={ticketsPath()}
