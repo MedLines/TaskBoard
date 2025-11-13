@@ -1,9 +1,11 @@
+import { getTargetTriple } from 'next/dist/build/swc/generated-native'
 import Link from 'next/link'
 
 import { Placeholder } from '@/components/Placeholder'
 import { Button } from '@/components/ui/button'
 import { initialTickets } from '@/data'
 import { TicketItem } from '@/features/ticket/components/ticket-item'
+import { getTicket } from '@/features/ticket/queries/get-ticket'
 import { ticketsPath } from '@/paths'
 
 type TicketPageProps = {
@@ -14,8 +16,8 @@ type TicketPageProps = {
 
 const TicketPage = async ({ params }: TicketPageProps) => {
   const { ticketId } = await params
-  const ticket = initialTickets.find((ticket) => ticket.id === ticketId)
-
+  // const ticket = initialTickets.find((ticket) => ticket.id === ticketId)
+  const ticket = await getTicket(ticketId)
   if (!ticket) {
     return (
       <Placeholder

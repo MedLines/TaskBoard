@@ -7,6 +7,7 @@ import { ThemeSwitcher } from './theme/theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 
 const Header = () => {
+  console.log('Header Rendering Header')
   return (
     <nav
       className="
