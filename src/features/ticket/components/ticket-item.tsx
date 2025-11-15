@@ -15,10 +15,9 @@ type TicketItemProps = {
   isDetail?: boolean
 }
 const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
-  console.log('Rendering TicketItem for ticket ')
   const detailButton = (
     <Button asChild variant="outline" size="icon">
-      <Link href={ticketPath(ticket.id)} className="text-sm">
+      <Link prefetch href={ticketPath(ticket.id)} className="text-sm">
         <LucideSquareArrowOutUpRight className="h-4 w-4" />
       </Link>
     </Button>
