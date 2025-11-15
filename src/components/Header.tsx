@@ -7,7 +7,6 @@ import { ThemeSwitcher } from './theme/theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 
 const Header = () => {
-  console.log('Header Rendering Header')
   return (
     <nav
       className="
@@ -21,7 +20,7 @@ const Header = () => {
         <Button asChild variant="ghost">
           <Link href={homePath()}>
             <LucideKanban />
-            <h1 className="text-lg font-semibold">TicketBounty</h1>
+            <h1 className="text-lg font-semibold">TaskBoard</h1>
           </Link>
         </Button>
       </div>

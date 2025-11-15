@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Road to Next App',
-  description: 'My road to Next.js journey',
+  title: 'Taskbounty',
+  description: 'Do the tasks you love, earn the rewards you deserve.',
 }
 
 export default function RootLayout({
