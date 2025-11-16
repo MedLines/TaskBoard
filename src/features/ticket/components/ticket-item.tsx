@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ticketPath } from '@/paths'
 
-import { deleteTicket } from '../actions/delete-tickets'
+import { deleteTicket } from '../actions/delete-ticket'
 import { TICKET_ICONS } from '../constants'
 
 type TicketItemProps = {
   ticket: Ticket
   isDetail?: boolean
 }
-const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
   const detailButton = (
     <Button asChild variant="outline" size="icon">
       <Link prefetch href={ticketPath(ticket.id)} className="text-sm">
