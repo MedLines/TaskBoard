@@ -2,36 +2,56 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 
+import {
+  ActionState,
+  fromErrorToActionState,
+} from '@/components/form/utils/to-action-state'
 import { prisma } from '@/lib/prisma'
 import { ticketPath, ticketsPath } from '@/paths'
 
-const upsertTicket = async (id: string | undefined, formData: FormData) => {
-  const title = formData.get('title') as string
-  const content = formData.get('content') as string
+const upsertTicketSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(191, 'Title must be at most 191 characters'),
+  content: z
+    .string()
+    .min(1, 'Content is required')
+    .max(1024, 'Content must be at most 1024 characters'),
+})
 
-  await prisma.ticket.upsert({
-    // Try to find a ticket with this ID
-    // If id exists (editing mode), search for that ticket
-    // If id is undefined (creating mode), use empty string which won't match anything
-    where: { id: id || '' },
+const upsertTicket = async (
+  id: string | undefined,
+  _actionState: ActionState, // the underscore just make eslint happy because the var is unused eslint-disable-line @typescript-eslint/no-unused-vars
+  formData: FormData
+) => {
+  try {
+    // Parse form data safely
+    const data = await upsertTicketSchema.parse({
+      title: formData.get('title'),
+      content: formData.get('content'),
+    })
 
-    // If the ticket EXISTS: update it with new data
-    update: {
-      title: title,
-      content: content,
-    },
-
-    // If the ticket DOESN'T exist: create a new one
-    create: {
-      title: title,
-      content: content,
-    },
-  })
+    // Upsert ticket
+    await prisma.ticket.upsert({
+      where: { id: id || '' },
+      update: data,
+      create: data,
+    })
+  } catch (error) {
+    console.error(error)
+    return fromErrorToActionState(error, formData)
+  }
+  // Revalidate ticket list path
   revalidatePath(ticketsPath())
 
+  // Redirect if editing/creating a single ticket
   if (id) {
     redirect(ticketPath(id))
   }
+  return { message: 'Ticket created successfully!' }
 }
+
 export { upsertTicket }
