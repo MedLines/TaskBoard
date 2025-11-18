@@ -1,6 +1,10 @@
-import { ZodError } from 'zod'
+import z, { ZodError } from 'zod'
 
-export type ActionState = { message: string; payload?: FormData }
+export type ActionState = {
+  message: string
+  fieldErrors: Record<string, string[] | undefined>
+  payload?: FormData
+}
 
 export const fromErrorToActionState = (
   error: unknown,
@@ -10,7 +14,8 @@ export const fromErrorToActionState = (
 
   if (error instanceof ZodError) {
     return {
-      message: error.issues[0].message,
+      message: '', //error.issues[0]?.message || 'Validation failed',
+      fieldErrors: z.flattenError(error).fieldErrors,
       payload: formData,
     }
     // if another error instance, return error message
@@ -18,6 +23,7 @@ export const fromErrorToActionState = (
   } else if (error instanceof Error) {
     return {
       message: error.message,
+      fieldErrors: {},
       payload: formData,
     }
   } else {
@@ -25,6 +31,7 @@ export const fromErrorToActionState = (
     // return generic error message
     return {
       message: 'An unknown error occurred. Please try again.',
+      fieldErrors: {},
       payload: formData,
     }
   }

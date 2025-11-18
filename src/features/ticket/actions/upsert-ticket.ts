@@ -12,13 +12,10 @@ import { prisma } from '@/lib/prisma'
 import { ticketPath, ticketsPath } from '@/paths'
 
 const upsertTicketSchema = z.object({
-  title: z
-    .string()
-    .min(1, 'Title is required')
-    .max(191, 'Title must be at most 191 characters'),
+  title: z.string().min(1).max(191, 'Title must be at most 191 characters'),
   content: z
     .string()
-    .min(1, 'Content is required')
+    .min(1)
     .max(1024, 'Content must be at most 1024 characters'),
 })
 
@@ -42,6 +39,8 @@ const upsertTicket = async (
     })
   } catch (error) {
     console.error(error)
+
+    //console.log('TREE', tree.fieldErrors)
     return fromErrorToActionState(error, formData)
   }
   // Revalidate ticket list path
@@ -51,7 +50,7 @@ const upsertTicket = async (
   if (id) {
     redirect(ticketPath(id))
   }
-  return { message: 'Ticket created successfully!' }
+  return { message: 'Ticket created successfully!', fieldErrors: {} }
 }
 
 export { upsertTicket }
