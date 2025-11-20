@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
+import { setCookieByKey } from '@/actions/cookies'
 import {
   ActionState,
   fromErrorToActionState,
@@ -49,6 +50,7 @@ const upsertTicket = async (
 
   // Redirect if editing/creating a single ticket
   if (id) {
+    await setCookieByKey('toast', 'Ticket Updated')
     redirect(ticketPath(id))
   }
   return toActionState('SUCCESS', 'Ticket Created') //{ message: 'Ticket created successfully!', fieldErrors: {} }
