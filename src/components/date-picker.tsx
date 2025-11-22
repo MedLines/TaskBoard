@@ -1,7 +1,7 @@
 'use client'
 
 import { CalendarIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useImperativeHandle, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -52,15 +52,29 @@ type DatePickerProps = {
   id: string
   name: string
   defaultValue?: string | undefined
+  imperativeHandleRef: React.RefObject<{ reset: () => void } | null>
 }
 
-const DatePicker = ({ id, name, defaultValue }: DatePickerProps) => {
+const DatePicker = ({
+  id,
+  name,
+  defaultValue,
+  imperativeHandleRef,
+}: DatePickerProps) => {
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date | undefined>(
     defaultValue ? new Date(defaultValue) : new Date()
   )
   const [month, setMonth] = useState<Date | undefined>(date)
   const [value, setValue] = useState(formatDate(date))
+
+  useImperativeHandle(imperativeHandleRef, () => ({
+    reset: () => {
+      setDate(new Date())
+      setMonth(new Date())
+      setValue(formatDate(new Date()))
+    },
+  }))
 
   return (
     <div className="relative flex items-center justify-center">
@@ -108,6 +122,8 @@ const DatePicker = ({ id, name, defaultValue }: DatePickerProps) => {
             selected={date}
             captionLayout="dropdown"
             month={month}
+            startMonth={new Date(1990, 1)}
+            endMonth={new Date(2030, 12)}
             onMonthChange={setMonth}
             onSelect={(date) => {
               setDate(date)
