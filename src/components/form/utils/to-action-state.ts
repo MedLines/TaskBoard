@@ -16,7 +16,7 @@ export const EMPYT_ACTION_STATE: ActionState = {
 
 export const fromErrorToActionState = (
   error: unknown,
-  formData: FormData
+  formData?: FormData
 ): ActionState => {
   // if validation error with Zod, return first error message
 
