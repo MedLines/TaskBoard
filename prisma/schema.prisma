@@ -5,13 +5,36 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+}
+
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+//   directUrl = env("DIRECT_URL")
+// }
+
+model User {
+id              String    @id @default(cuid())
+name            String    @unique
+email           String    @unique
+passwordHash    String
+sessions        Session[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Ticket {
