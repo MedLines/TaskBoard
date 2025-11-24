@@ -1,6 +1,7 @@
 import { LucideKanban } from 'lucide-react'
 import Link from 'next/link'
 
+import { signOut } from '@/features/auth/actions/sign-out'
 import { homePath, signInPath, signUpPath, ticketsPath } from '@/paths'
 
 import { ThemeSwitcher } from './theme/theme-switcher'
@@ -27,6 +28,9 @@ const Header = () => {
       >
         Sign In
       </Link>
+      <form action={signOut}>
+        <Button type="submit">Sign out</Button>
+      </form>
     </>
   )
   return (

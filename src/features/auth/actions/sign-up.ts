@@ -1,12 +1,16 @@
 'use server'
 
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
+import { setCookieByKey } from '@/actions/cookies'
 import {
   ActionState,
   fromErrorToActionState,
   toActionState,
 } from '@/components/form/utils/to-action-state'
+import { auth } from '@/lib/auth'
+import { ticketsPath } from '@/paths'
 
 const signUpSchema = z
   .object({
@@ -40,9 +44,19 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
     const { username, email, password } = signUpSchema.parse(
       Object.fromEntries(formData)
     )
+    await auth.api.signUpEmail({
+      body: {
+        name: username,
+        email,
+        password,
+        username,
+      },
+    })
     // TODO store in database
   } catch (error) {
     return fromErrorToActionState(error, formData)
   }
+  await setCookieByKey('toast', 'Successfully signed up')
+  redirect(ticketsPath())
   return toActionState('SUCCESS', 'Sign up successful')
 }
