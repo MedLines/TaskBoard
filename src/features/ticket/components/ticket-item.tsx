@@ -1,4 +1,3 @@
-import { Ticket } from '@prisma/client'
 import clsx from 'clsx'
 import {
   LucideMoreVertical,
@@ -15,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Ticket } from '@/generated/prisma/client'
 import { ticketEditPath, ticketPath } from '@/paths'
 import { toCurrencyFromCent } from '@/utils/currency'
 

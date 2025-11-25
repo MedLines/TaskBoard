@@ -1,5 +1,4 @@
 'use client'
-import { Ticket, TicketStatus } from '@prisma/client'
 import { LucideTrash } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -13,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Ticket } from '@/generated/prisma/client'
+import { TicketStatus } from '@/generated/prisma/enums'
 
 import { deleteTicket } from '../actions/delete-ticket'
 import { updateTicketStatus } from '../actions/update-ticket-status'

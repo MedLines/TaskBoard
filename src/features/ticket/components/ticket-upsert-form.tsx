@@ -1,6 +1,5 @@
 'use client'
 
-import { Ticket } from '@prisma/client'
 import { useActionState, useRef } from 'react'
 
 import { DatePicker } from '@/components/date-picker'
@@ -11,6 +10,7 @@ import { EMPYT_ACTION_STATE } from '@/components/form/utils/to-action-state'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Ticket } from '@/generated/prisma/client'
 import { fromCent } from '@/utils/currency'
 
 import { upsertTicket } from '../actions/upsert-ticket'
