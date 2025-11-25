@@ -46,13 +46,12 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
     )
     await auth.api.signUpEmail({
       body: {
-        name: username,
+        name: '',
         email,
         password,
         username,
       },
     })
-    // TODO store in database
   } catch (error) {
     return fromErrorToActionState(error, formData)
   }
