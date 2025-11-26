@@ -13,9 +13,9 @@ const SignUpForm = () => {
   const [actionState, action] = useActionState(signUp, EMPYT_ACTION_STATE)
   return (
     <Form action={action} actionState={actionState}>
-      <label htmlFor="username">Username</label>
-      <Input id="username" name="username" placeholder="e.g. johndoe" />
-      <FieldError actionState={actionState} name="username" />
+      <label htmlFor="name">Name</label>
+      <Input id="name" name="name" placeholder="e.g. johndoe" />
+      <FieldError actionState={actionState} name="name" />
       <label htmlFor="email">Email</label>
       <Input id="email" name="email" placeholder="you@example.com" />
       <FieldError actionState={actionState} name="email" />

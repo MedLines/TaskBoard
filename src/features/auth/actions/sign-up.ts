@@ -14,14 +14,7 @@ import { ticketsPath } from '@/paths'
 
 const signUpSchema = z
   .object({
-    username: z
-      .string()
-      .min(1)
-      .max(191)
-      .refine(
-        (value) => !value.includes(' '),
-        'Username cannot contain spaces'
-      ),
+    name: z.string().min(1).max(191),
     email: z
       .email({ pattern: z.regexes.email })
       .min(1, { message: 'Email is required' })
@@ -41,15 +34,14 @@ const signUpSchema = z
 
 export const signUp = async (_actionState: ActionState, formData: FormData) => {
   try {
-    const { username, email, password } = signUpSchema.parse(
+    const { name, email, password } = signUpSchema.parse(
       Object.fromEntries(formData)
     )
     await auth.api.signUpEmail({
       body: {
-        name: '',
+        name,
         email,
         password,
-        username,
       },
     })
   } catch (error) {

@@ -17,15 +17,15 @@ export const auth = betterAuth({
 
   // 4. Handle Custom Attributes (migration from getUserAttributes)
   // Better Auth handles basic fields automatically, but here is how you enforce 'username'
-  user: {
-    additionalFields: {
-      username: {
-        type: 'string',
-        required: true, // Set to false if you want it optional
-        input: true, // Allows passing generic attributes during sign-up
-      },
-    },
-  },
+  // user: {
+  //   additionalFields: {
+  //     username: {
+  //       type: 'string',
+  //       required: true, // Set to false if you want it optional
+  //       input: true, // Allows passing generic attributes during sign-up
+  //     },
+  //   },
+  // },
 
   // Optional: Configure session caching or generic settings
   session: {
