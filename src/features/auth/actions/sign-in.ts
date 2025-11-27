@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -32,12 +33,13 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
         email,
         password,
       },
+      headers: await headers(),
     })
   } catch (error) {
     return fromErrorToActionState(error, formData)
   }
+  revalidatePath('/', 'layout')
 
   await setCookieByKey('toast', 'Successfully signed in')
-  revalidatePath('/', 'layout')
   redirect(ticketsPath())
 }

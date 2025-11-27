@@ -1,6 +1,8 @@
 'use client'
 import { LucideKanban, LucideLogOut } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 
 import { signOut } from '@/features/auth/actions/sign-out'
 import { authClient } from '@/lib/auth-client'
@@ -12,6 +14,11 @@ import { Button, buttonVariants } from './ui/button'
 
 const Header = () => {
   const { data: session, refetch } = authClient.useSession()
+  const pathname = usePathname()
+
+  useEffect(() => {
+    refetch()
+  }, [pathname, refetch])
 
   const navItems = session?.session ? (
     <>
