@@ -5,14 +5,15 @@ import { redirect } from 'next/navigation'
 
 import { setCookieByKey } from '@/actions/cookies'
 import { auth } from '@/lib/auth'
-import { homePath } from '@/paths'
+import { signInPath } from '@/paths'
 
 const signOut = async () => {
+  // await getAuth()
   await auth.api.signOut({
     headers: await headers(),
   })
   await setCookieByKey('toast', 'Successfully signed out')
-  redirect(homePath())
+  redirect(signInPath())
 }
 
 export { signOut }

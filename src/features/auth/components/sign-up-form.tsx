@@ -14,10 +14,20 @@ const SignUpForm = () => {
   return (
     <Form action={action} actionState={actionState}>
       <label htmlFor="name">Name</label>
-      <Input id="name" name="name" placeholder="e.g. johndoe" />
+      <Input
+        id="name"
+        name="name"
+        placeholder="e.g. johndoe"
+        defaultValue={actionState.payload?.get('name') as string}
+      />
       <FieldError actionState={actionState} name="name" />
       <label htmlFor="email">Email</label>
-      <Input id="email" name="email" placeholder="you@example.com" />
+      <Input
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        defaultValue={actionState.payload?.get('email') as string}
+      />
       <FieldError actionState={actionState} name="email" />
 
       <label htmlFor="password">Password</label>
@@ -26,6 +36,7 @@ const SignUpForm = () => {
         name="password"
         type="password"
         placeholder="Eenter a password"
+        defaultValue={actionState.payload?.get('password') as string}
       />
       <FieldError actionState={actionState} name="password" />
 
@@ -35,6 +46,7 @@ const SignUpForm = () => {
         name="confirmPassword"
         type="password"
         placeholder="Re-enter your password"
+        defaultValue={actionState.payload?.get('confirmPassword') as string}
       />
       <FieldError actionState={actionState} name="confirmPassword" />
 
