@@ -1,25 +1,19 @@
+'use client'
 import { LucideKanban, LucideLogOut } from 'lucide-react'
-import { headers } from 'next/headers'
 import Link from 'next/link'
 
 import { signOut } from '@/features/auth/actions/sign-out'
-import { auth } from '@/lib/auth'
+import { authClient } from '@/lib/auth-client'
 import { homePath, signInPath, signUpPath, ticketsPath } from '@/paths'
 
 import { SubmitButton } from './form/submit-button'
 import { ThemeSwitcher } from './theme/theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 
-const Header = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  })
+const Header = () => {
+  const { data: session, refetch } = authClient.useSession()
 
-  const navItems = session ? (
-    <form action={signOut}>
-      <SubmitButton label="Sign out" icon={<LucideLogOut />} />
-    </form>
-  ) : (
+  const navItems = session?.session ? (
     <>
       <Link
         className={buttonVariants({ variant: 'default' })}
@@ -27,7 +21,16 @@ const Header = async () => {
       >
         Tickets
       </Link>
-
+      <form action={signOut}>
+        <SubmitButton
+          variant="outline"
+          label="Sign out"
+          icon={<LucideLogOut />}
+        />
+      </form>
+    </>
+  ) : (
+    <>
       <Link
         className={buttonVariants({ variant: 'outline' })}
         href={signUpPath()}
@@ -36,7 +39,7 @@ const Header = async () => {
       </Link>
 
       <Link
-        className={buttonVariants({ variant: 'outline' })}
+        className={buttonVariants({ variant: 'default' })}
         href={signInPath()}
       >
         Sign In

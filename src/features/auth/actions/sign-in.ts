@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -37,6 +38,6 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
   }
 
   await setCookieByKey('toast', 'Successfully signed in')
-
+  revalidatePath('/', 'layout')
   redirect(ticketsPath())
 }
