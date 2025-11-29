@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Ticket } from '@/generated/prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import { ticketEditPath, ticketPath } from '@/paths'
 import { toCurrencyFromCent } from '@/utils/currency'
 
@@ -22,7 +22,15 @@ import { TICKET_ICONS } from '../constants'
 import { TicktMoreMenu } from './ticket-more-menu'
 
 type TicketItemProps = {
-  ticket: Ticket
+  ticket: Prisma.TicketGetPayload<{
+    include: {
+      user: {
+        select: {
+          name: true
+        }
+      }
+    }
+  }>
   isDetail?: boolean
 }
 const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
@@ -53,12 +61,12 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
   )
   return (
     <div
-      className={clsx('w-full flex  gap-x-1 ', {
-        'max-w-[580px]': isDetail,
-        'max-w-[420px]': !isDetail,
+      className={clsx('flex gap-x-1', {
+        'w-full max-w-[580px]': isDetail,
+        'w-full max-w-[420px]': !isDetail,
       })}
     >
-      <Card className="w-full ">
+      <Card className="flex-1 min-w-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-x-2">
             <span>{TICKET_ICONS[ticket.status]}</span>
@@ -75,7 +83,9 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
           </span>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">
+            {ticket.deadline} by {ticket.user.name}
+          </p>
           <p className="text-sm text-muted-foreground">
             {toCurrencyFromCent(ticket.bounty)}
           </p>

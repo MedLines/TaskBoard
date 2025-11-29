@@ -51,7 +51,7 @@
 }
 
 .animate-header-from-top {
-  animation: header-from-top 0.5s ease-out;
+  animation: header-from-top 0.3s ease-out;
 }
 
 @plugin 'tailwindcss-animate';

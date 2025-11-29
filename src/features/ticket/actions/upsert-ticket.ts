@@ -10,8 +10,9 @@ import {
   fromErrorToActionState,
   toActionState,
 } from '@/components/form/utils/to-action-state'
+import { getAuth } from '@/features/auth/queries/get-auth'
 import { prisma } from '@/lib/prisma'
-import { ticketPath, ticketsPath } from '@/paths'
+import { signInPath, ticketPath, ticketsPath } from '@/paths'
 import { toCent } from '@/utils/currency'
 
 const upsertTicketSchema = z.object({
@@ -29,6 +30,11 @@ const upsertTicket = async (
   _actionState: ActionState, // the underscore just make eslint happy because the var is unused eslint-disable-line @typescript-eslint/no-unused-vars
   formData: FormData
 ) => {
+  const { user } = await getAuth()
+  if (!user) {
+    redirect(signInPath())
+  }
+
   try {
     // Parse form data safely
     const data = await upsertTicketSchema.parse({
@@ -38,7 +44,11 @@ const upsertTicket = async (
       bounty: formData.get('bounty'),
     })
 
-    const dbData = { ...data, bounty: toCent(data.bounty) }
+    const dbData = {
+      ...data,
+      userId: user.id, //must fix in the future so the user can't edit other's tickets
+      bounty: toCent(data.bounty),
+    }
     // Upsert ticket
     await prisma.ticket.upsert({
       where: { id: id || '' },

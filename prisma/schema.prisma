@@ -14,22 +14,6 @@ datasource db {
 }
 
 
-model Ticket {
-  id        String       @id @default(cuid())
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  title     String
-  content   String       @db.VarChar(1024)
-  status    TicketStatus @default(OPEN)
-  deadline  String
-  bounty    Int
-}
-
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  DONE
-}
 
 model User {
   id            String    @id
@@ -41,6 +25,7 @@ model User {
   name          String?    
   sessions      Session[]
   accounts      Account[]
+  tickets       Ticket[]
 
   @@unique([email])
   @@map("user")
@@ -61,6 +46,28 @@ model Session {
   @@index([userId])
   @@map("session")
 }
+
+model Ticket {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  title     String
+  content   String       @db.VarChar(1024)
+  status    TicketStatus @default(OPEN)
+  deadline  String
+  bounty    Int
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId]) // this to improve performance when we querry tickets by userId
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
 
 model Account {
   id                    String    @id
