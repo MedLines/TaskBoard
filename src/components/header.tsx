@@ -1,11 +1,9 @@
 'use client'
 import { LucideKanban, LucideLogOut } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
 
 import { signOut } from '@/features/auth/actions/sign-out'
-import { authClient } from '@/lib/auth-client'
+import { useAuth } from '@/features/auth/hooks/use-auth'
 import { homePath, signInPath, signUpPath, ticketsPath } from '@/paths'
 
 import { SubmitButton } from './form/submit-button'
@@ -13,14 +11,13 @@ import { ThemeSwitcher } from './theme/theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 
 const Header = () => {
-  const { data: session, refetch } = authClient.useSession()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    refetch()
-  }, [pathname, refetch])
-
-  const navItems = session?.session ? (
+  const { user, isPending } = useAuth()
+  if (isPending) {
+    // isPending here is used to prevent the flicker
+    // that happens because of the useEffect in the navbar
+    return null
+  }
+  const navItems = user ? (
     <>
       <Link
         className={buttonVariants({ variant: 'default' })}
@@ -57,6 +54,7 @@ const Header = () => {
   return (
     <nav
       className="
+        animate-header-from-top
         supports-backdrop-blur:bg-background/60
         fixed left-0 right-0 top-0 z-20
         border-b bg-background/95 backdrop-blur
