@@ -24,18 +24,6 @@ type TicktMoreMenuProps = {
   ticket: Ticket
 }
 const TicktMoreMenu = ({ ticket, trigger }: TicktMoreMenuProps) => {
-  // const deleteButton = (
-  //   <ConfirmDialog
-  //     action={deleteTicket.bind(null, ticket.id)}
-  //     trigger={
-  //       <DropdownMenuItem>
-  //         <LucideTrash className=" h-4 w-4" />
-  //         <span>Delete</span>
-  //       </DropdownMenuItem>
-  //     }
-  //   />
-  // )
-
   const [deleteButton, deleteDialog] = useConfirmDialog({
     action: deleteTicket.bind(null, ticket.id),
     trigger: (
@@ -47,22 +35,17 @@ const TicktMoreMenu = ({ ticket, trigger }: TicktMoreMenuProps) => {
   })
 
   const handleUpdateTicketStatus = async (value: string) => {
-    const promise = updateTicketStatus(ticket.id, value as TicketStatus)
+    const toastId = toast.loading('Updating ticket status...')
 
-    toast.promise(promise, {
-      loading: 'Updating ticket status...',
-      success: 'Ticket status updated successfully',
-      error: 'Error updating ticket status',
-    })
+    const result = await updateTicketStatus(ticket.id, value as TicketStatus)
 
-    const result = await promise
-
-    if (result.status === 'ERROR') {
-      toast.error(result.message)
-    } else if (result.status === 'SUCCESS') {
-      toast.success(result.message)
+    if (result.status === 'SUCCESS') {
+      toast.success(result.message, { id: toastId })
+    } else {
+      toast.error(result.message, { id: toastId })
     }
   }
+
   const ticketStatusRadioGroupItems = (
     <DropdownMenuRadioGroup
       value={ticket.status}
