@@ -38,6 +38,17 @@
   }
 }
 
+@keyframes sidebar-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-accordion-down {
   animation: accordion-down 0.2s ease-out;
 }
@@ -52,6 +63,10 @@
 
 .animate-header-from-top {
   animation: header-from-top 0.3s ease-out;
+}
+
+.animate-sidebar-from-left {
+  animation: sidebar-from-left 0.3s ease-out;
 }
 
 @plugin 'tailwindcss-animate';

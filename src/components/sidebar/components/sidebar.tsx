@@ -1,12 +1,15 @@
 'use client'
 import { useState } from 'react'
 
+import { useAuth } from '@/features/auth/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
 import { navItems } from '../constants'
 import { SidebarItem } from './sidebar-item'
 
 const Sidebar = () => {
+  const { user, isPending } = useAuth()
+
   const [isTransition, setTransition] = useState(false)
   const [isOpen, setOpen] = useState(false)
 
@@ -14,6 +17,9 @@ const Sidebar = () => {
     setTransition(true)
     setOpen(open)
     setTimeout(() => setTransition(false), 200)
+  }
+  if (!user || isPending) {
+    return <div className="w-[78px] " /> //this so when the sidebar animates for the first time we don't get a layout shift
   }
   return (
     <nav
