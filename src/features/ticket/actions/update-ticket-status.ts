@@ -21,7 +21,10 @@ export const updateTicketStatus = async (id: string, status: TicketStatus) => {
     })
 
     if (!ticket || !isOwner(user, ticket)) {
-      throw new Error('You are not authorized to edit this ticket')
+      return toActionState(
+        'ERROR',
+        'You are not authorized to edit this ticket'
+      )
     }
 
     await prisma.ticket.update({
