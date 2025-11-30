@@ -24,15 +24,12 @@ import { TICKET_ICONS } from '../constants'
 import { TicktMoreMenu } from './ticket-more-menu'
 
 type TicketItemProps = {
-  ticket: Prisma.TicketGetPayload<{
-    include: {
-      user: {
-        select: {
-          name: true
-        }
-      }
+  ticket: Prisma.TicketGetPayload<true> & {
+    userId: string
+    user: {
+      name: string | null
     }
-  }>
+  }
   isDetail?: boolean
 }
 const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
