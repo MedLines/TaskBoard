@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import { signOut } from '@/features/auth/actions/sign-out'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { homePath, signInPath, signUpPath, ticketsPath } from '@/paths'
+import { homePath, signInPath, signUpPath } from '@/paths'
 
 import { SubmitButton } from './form/submit-button'
 import { ThemeSwitcher } from './theme/theme-switcher'
@@ -18,21 +18,13 @@ const Header = () => {
     return null
   }
   const navItems = user ? (
-    <>
-      <Link
-        className={buttonVariants({ variant: 'default' })}
-        href={ticketsPath()}
-      >
-        Tickets
-      </Link>
-      <form action={signOut}>
-        <SubmitButton
-          variant="outline"
-          label="Sign out"
-          icon={<LucideLogOut />}
-        />
-      </form>
-    </>
+    <form action={signOut}>
+      <SubmitButton
+        variant="outline"
+        label="Sign out"
+        icon={<LucideLogOut />}
+      />
+    </form>
   ) : (
     <>
       <Link
