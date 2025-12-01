@@ -10,7 +10,6 @@ export const getAuth = cache(async () => {
   })
   const sessionId = session?.session.id ?? null
 
-  console.log(sessionId)
   if (!session) {
     return {
       user: null,

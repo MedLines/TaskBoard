@@ -10,7 +10,6 @@ const RedirectToast = () => {
   useEffect(() => {
     const showCookieToast = async () => {
       const message = await getCookieByKey('toast')
-      console.log(message)
       if (message) {
         toast.success(message)
         await deleteCookieByKey('toast')

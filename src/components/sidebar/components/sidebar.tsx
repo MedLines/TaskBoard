@@ -19,7 +19,7 @@ const Sidebar = () => {
     setTimeout(() => setTransition(false), 200)
   }
   if (!user || isPending) {
-    return <div className="w-[78px] bg-secondary/20 hidden" /> //this so when the sidebar animates for the first time we don't get a layout shift
+    return <div className="w-[78px] bg-secondary/20" /> //this so when the sidebar animates for the first time we don't get a layout shift
   }
   return (
     <nav
