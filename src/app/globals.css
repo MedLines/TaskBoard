@@ -66,7 +66,7 @@
 }
 
 .animate-sidebar-from-left {
-  animation: sidebar-from-left 0.3s ease-out;
+  animation: sidebar-from-left 0.3s ease-out both;
 }
 
 @plugin 'tailwindcss-animate';
