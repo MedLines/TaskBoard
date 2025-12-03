@@ -1,15 +1,15 @@
+import { SearchParams } from 'nuqs/server'
 import { Suspense } from 'react'
 
 import Heading from '@/components/heading'
 import { Spinner } from '@/components/spinner'
 import TicketList from '@/features/ticket/components/ticket-list'
-import { SearchParams } from '@/features/ticket/search-params'
+import { searchParamsCache } from '@/features/ticket/search-params'
+
 type HomePageProps = {
   searchParams: Promise<SearchParams>
 }
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const resolvedSearchParams = await searchParams
-
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
@@ -17,7 +17,9 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
         description="Tickets by everyone at one place"
       />
       <Suspense fallback={<Spinner />}>
-        <TicketList searchParams={resolvedSearchParams} />
+        <TicketList
+          searchParams={searchParamsCache.parse(await searchParams)}
+        />
       </Suspense>{' '}
     </div>
   )
