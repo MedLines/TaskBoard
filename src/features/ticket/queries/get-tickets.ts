@@ -1,4 +1,5 @@
 'use server'
+
 import { prisma } from '@/lib/prisma'
 
 import { ParsedSearchParams } from '../search-params'
@@ -17,23 +18,24 @@ export const getTickets = async (
   const skip = searchParams.page * searchParams.size
   const take = searchParams.size
 
-  const tickets = await prisma.ticket.findMany({
-    where,
-    skip,
-    take,
-    orderBy: {
-      [searchParams.sortKey]: searchParams.sortValue,
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
+  const [tickets, count] = await prisma.$transaction([
+    prisma.ticket.findMany({
+      where,
+      skip,
+      take,
+      orderBy: {
+        [searchParams.sortKey]: searchParams.sortValue,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
         },
       },
-    },
-  })
-
-  const count = await prisma.ticket.count({ where })
+    }),
+    prisma.ticket.count({ where }),
+  ])
 
   return {
     list: tickets,
