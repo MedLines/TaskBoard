@@ -11,6 +11,7 @@ type TicketSearchInput = {
 
 const TicketSearchInput = ({ placeholder }: TicketSearchInput) => {
   const [search, setSearch] = useQueryState('search', searchParser)
+
   return (
     <SearchInput
       value={search}
