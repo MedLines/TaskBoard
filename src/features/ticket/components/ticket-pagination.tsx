@@ -24,8 +24,9 @@ const TicketPagination = ({
     paginationParser,
     paginationOptions
   )
-  const [search] = useQueryState('search', searchParser)
-  const prevSearch = useRef(search)
+  const [search] = useQueryState('search', searchParser) // this and the below
+  const prevSearch = useRef(search) // is useful so you can return to the first page
+  //when you are searching
 
   useEffect(() => {
     if (prevSearch.current === search) return
