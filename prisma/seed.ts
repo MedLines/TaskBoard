@@ -58,6 +58,12 @@ const ticketsData = [
   },
 ]
 
+const commentsData = [
+  { content: 'First comment from DB.' },
+  { content: 'Second comment from DB.' },
+  { content: 'Third comment from DB.' },
+]
+
 // --- Seeding Function ---
 
 const seed = async () => {
@@ -67,6 +73,7 @@ const seed = async () => {
   try {
     // 1. Clean up existing data
     console.log('🧹 Cleaning up existing data...')
+    await prisma.comment.deleteMany()
     await prisma.user.deleteMany()
     await prisma.ticket.deleteMany()
     await prisma.session.deleteMany()
@@ -96,10 +103,13 @@ const seed = async () => {
       }
     }
 
-    // 3. Find the Admin user to link tickets
-    console.log('🔍 Finding admin user...')
+    // 3. Find users for linking tickets and comments
+    console.log('🔍 Finding users...')
     const adminUser = await prisma.user.findUnique({
       where: { email: ADMIN_EMAIL },
+    })
+    const medUser = await prisma.user.findUnique({
+      where: { email: MED_EMAIL },
     })
 
     if (!adminUser) {
@@ -107,7 +117,13 @@ const seed = async () => {
         'Admin user not found after creation. Cannot link tickets.'
       )
     }
+    if (!medUser) {
+      throw new Error(
+        'Med user not found after creation. Cannot link comments.'
+      )
+    }
     console.log(`✅ Found admin user: ${adminUser.id}`)
+    console.log(`✅ Found med user: ${medUser.id}`)
 
     // 4. Create Tickets linked to Admin
     console.log('🎫 Creating tickets...')
@@ -121,11 +137,31 @@ const seed = async () => {
     })
     console.log(`✅ Created ${ticketsData.length} tickets`)
 
+    // 5. Fetch created tickets to get their IDs
+    console.log('🔍 Fetching created tickets...')
+    const dbTickets = await prisma.ticket.findMany({
+      where: { userId: adminUser.id },
+      orderBy: { createdAt: 'asc' },
+    })
+    console.log(`✅ Fetched ${dbTickets.length} tickets`)
+
+    // 6. Create Comments linked to first ticket and Med user
+    console.log('💬 Creating comments...')
+    await prisma.comment.createMany({
+      data: commentsData.map((comment) => ({
+        ...comment,
+        ticketId: dbTickets[0].id,
+        userId: medUser.id,
+      })),
+    })
+    console.log(`✅ Created ${commentsData.length} comments`)
+
     const t1 = performance.now()
     console.log(`🎉 DB Seed finished successfully in ${(t1 - t0).toFixed(2)}ms`)
     console.log('\n📋 Seed Summary:')
     console.log(`   Users created: ${usersData.length}`)
     console.log(`   Tickets created: ${ticketsData.length}`)
+    console.log(`   Comments created: ${commentsData.length}`)
     console.log('\n🔐 Login Credentials:')
     console.log(`   Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`)
     console.log(`   Med: ${MED_EMAIL} / ${MED_PASSWORD}`)

@@ -26,6 +26,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   tickets       Ticket[]
+  comments      Comment[]
 
   @@unique([email])
   @@map("user")
@@ -48,18 +49,35 @@ model Session {
 }
 
 model Ticket {
-  id        String       @id @default(cuid())
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  title     String
-  content   String       @db.VarChar(1024)
-  status    TicketStatus @default(OPEN)
-  deadline  String
-  bounty    Int
-  userId    String
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  title       String
+  content     String       @db.VarChar(1024)
+  status      TicketStatus @default(OPEN)
+  deadline    String
+  bounty      Int
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+
 
   @@index([userId]) // this to improve performance when we querry tickets by userId
+}
+
+model Comment {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  content   String       @db.VarChar(1024)
+  ticketId  String
+  ticket    Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+
+@@index([ticketId]) 
+@@index([userId]) 
+
 }
 
 enum TicketStatus {
@@ -100,3 +118,5 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+
