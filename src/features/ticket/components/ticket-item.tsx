@@ -5,7 +5,6 @@ import {
   LucideSquareArrowOutUpRight,
 } from 'lucide-react'
 import Link from 'next/link'
-import { Suspense } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -15,10 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { getAuth } from '@/features/auth/queries/get-auth'
 import { isOwner } from '@/features/auth/utils/is-owner'
 import { Comments } from '@/features/comment/components/comments'
+import { CommentWithMetadata } from '@/features/comment/types'
 import { Prisma } from '@/generated/prisma/client'
 import { ticketEditPath, ticketPath } from '@/paths'
 import { toCurrencyFromCent } from '@/utils/currency'
@@ -34,8 +33,9 @@ type TicketItemProps = {
     }
   }
   isDetail?: boolean
+  comments?: CommentWithMetadata[]
 }
-const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail, comments }: TicketItemProps) => {
   const { user } = await getAuth()
   const isTicketOwner = isOwner(user, ticket)
 
@@ -112,19 +112,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
           )}
         </div>
       </div>
-      {isDetail ? (
-        <Suspense
-          fallback={
-            <div className="flex flex-col gap-y-4">
-              <Skeleton className="h-[250px] w-full" />
-              <Skeleton className="h-[80] ml-8" />
-              <Skeleton className="h-[80] ml-8" />
-            </div>
-          }
-        >
-          <Comments ticketId={ticket.id} />{' '}
-        </Suspense>
-      ) : null}
+      {isDetail ? <Comments ticketId={ticket.id} comments={comments} /> : null}
     </div>
   )
 }
