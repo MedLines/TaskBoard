@@ -1,5 +1,5 @@
 import { Cardcompact } from '@/components/card-compact'
-import { getAuth } from '@/features/auth/queries/get-auth'
+import { getAuthClient } from '@/features/auth/queries/get-auth-client'
 import { isOwner } from '@/features/auth/utils/is-owner'
 
 import { CommentWithMetadata } from '../types'
@@ -12,8 +12,8 @@ type CommentsProps = {
   comments?: CommentWithMetadata[]
 }
 
-const Comments = async ({ ticketId, comments = [] }: CommentsProps) => {
-  const { user } = await getAuth()
+const Comments = ({ ticketId, comments = [] }: CommentsProps) => {
+  const { user } = getAuthClient()
   return (
     <>
       <Cardcompact
