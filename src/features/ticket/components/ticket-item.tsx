@@ -26,15 +26,19 @@ import { TICKET_ICONS } from '../constants'
 import { TicktMoreMenu } from './ticket-more-menu'
 
 type TicketItemProps = {
-  ticket: Prisma.TicketGetPayload<true> & {
-    userId: string
-    user: {
-      name: string | null
+  ticket: Prisma.TicketGetPayload<{
+    include: {
+      user: {
+        select: {
+          name: true
+        }
+      }
     }
-  }
+  }> & { isOwner: boolean }
   isDetail?: boolean
   comments?: CommentWithMetadata[]
 }
+
 const TicketItem = async ({ ticket, isDetail, comments }: TicketItemProps) => {
   const { user } = await getAuth()
   const isTicketOwner = isOwner(user, ticket)

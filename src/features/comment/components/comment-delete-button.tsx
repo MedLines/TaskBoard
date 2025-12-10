@@ -25,11 +25,6 @@ const CommentDeleteButton = ({ id }: CommentDeleteButtonProps) => {
       {deleteDialog}
       {deleteButton}
     </>
-    // <form action={deleteComment.bind(null, id)}>
-    //   <Button variant="outline" size="icon">
-    //     <LucideTrash className="w-4 h-4" />
-    //   </Button>
-    // </form>
   )
 }
 
