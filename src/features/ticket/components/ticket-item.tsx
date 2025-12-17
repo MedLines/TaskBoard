@@ -15,8 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Comments } from '@/features/comment/components/comments'
-import { CommentWithMetadata } from '@/features/comment/types'
 import { Prisma } from '@/generated/prisma/client'
 import { ticketEditPath, ticketPath } from '@/paths'
 import { toCurrencyFromCent } from '@/utils/currency'
@@ -35,7 +33,7 @@ type TicketItemProps = {
     }
   }> & { isOwner: boolean }
   isDetail?: boolean
-  comments?: CommentWithMetadata[]
+  comments?: React.ReactNode
 }
 
 const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
@@ -112,7 +110,8 @@ const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
           )}
         </div>
       </div>
-      {isDetail ? <Comments ticketId={ticket.id} comments={comments} /> : null}
+      {/* {isDetail ? <Comments ticketId={ticket.id} comments={comments} /> : null} */}
+      {comments}
     </div>
   )
 }
