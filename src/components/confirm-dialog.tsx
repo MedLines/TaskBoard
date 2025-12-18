@@ -3,7 +3,7 @@ import { cloneElement, useActionState, useState } from 'react'
 
 import { Form } from './form/form'
 import { SubmitButton } from './form/submit-button'
-import { ActionState, EMPYT_ACTION_STATE } from './form/utils/to-action-state'
+import { ActionState, EMPTY_ACTION_STATE } from './form/utils/to-action-state'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +20,7 @@ type UseConfirmDialogProps = {
   description?: string
   action: () => Promise<ActionState>
   trigger: React.ReactElement<{ onClick: () => void }>
+  onSuccess?: (actionStata: ActionState) => void
 }
 
 const useConfirmDialog = ({
@@ -27,6 +28,7 @@ const useConfirmDialog = ({
   description = 'This action cannot be undone, Make sure you want to continue.',
   action,
   trigger,
+  onSuccess,
 }: UseConfirmDialogProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -34,7 +36,11 @@ const useConfirmDialog = ({
     onClick: () => setIsOpen((state) => !state),
   })
 
-  const [actionState, formAction] = useActionState(action, EMPYT_ACTION_STATE)
+  const [actionState, formAction] = useActionState(action, EMPTY_ACTION_STATE)
+  const handleSuccess = () => {
+    setIsOpen(false)
+    onSuccess?.(actionState)
+  }
 
   const dialog = (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -45,7 +51,11 @@ const useConfirmDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Form actionState={actionState} action={formAction}>
+          <Form
+            actionState={actionState}
+            action={formAction}
+            onSuccess={handleSuccess}
+          >
             <AlertDialogAction asChild>
               <SubmitButton label="Confirm" />
             </AlertDialogAction>

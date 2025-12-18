@@ -21,7 +21,10 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   const commentsPromise = getComments(ticketId)
   // this is for parralel data fetching, instead
   //of waiting for them to resolve sequentially
-  const [ticket, comments] = await Promise.all([ticketPromise, commentsPromise])
+  const [ticket, paginatedComments] = await Promise.all([
+    ticketPromise,
+    commentsPromise,
+  ])
 
   if (!ticket) {
     notFound()
@@ -41,7 +44,12 @@ const TicketPage = async ({ params }: TicketPageProps) => {
         <TicketItem
           ticket={ticket}
           isDetail
-          comments={<Comments ticketId={ticket.id} comments={comments} />}
+          comments={
+            <Comments
+              ticketId={ticket.id}
+              paginatedComments={paginatedComments}
+            />
+          }
         />
       </div>
     </div>

@@ -12,7 +12,9 @@ const CommentItem = ({ comment, buttons }: CommentItemProps) => {
     <div className="flex gap-x-2">
       <Card className="p-4 flex-1 flex flex-col gap-y-1">
         <div className="flex justify-between">
-          <p className="text-sm text-muted-foreground">{comment.user?.name}</p>
+          <p className="text-sm text-muted-foreground">
+            {comment.user?.name ?? 'Deleted User'}
+          </p>
           <p className="text-sm text-muted-foreground">
             {comment.createdAt.toLocaleString()}
           </p>

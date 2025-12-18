@@ -6,7 +6,7 @@ import { DatePicker } from '@/components/date-picker'
 import { FieldError } from '@/components/form/field-error'
 import { Form } from '@/components/form/form'
 import { SubmitButton } from '@/components/form/submit-button'
-import { EMPYT_ACTION_STATE } from '@/components/form/utils/to-action-state'
+import { EMPTY_ACTION_STATE } from '@/components/form/utils/to-action-state'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -22,7 +22,7 @@ type TicketUpsertFormProps = {
 const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
   const [actionState, action] = useActionState(
     upsertTicket.bind(null, ticket?.id),
-    EMPYT_ACTION_STATE
+    EMPTY_ACTION_STATE
   )
 
   const datePickerImperativeHandleRef = useRef<{
