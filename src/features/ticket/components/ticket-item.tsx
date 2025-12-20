@@ -15,23 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Prisma } from '@/generated/prisma/client'
 import { ticketEditPath, ticketPath } from '@/paths'
 import { toCurrencyFromCent } from '@/utils/currency'
 
 import { TICKET_ICONS } from '../constants'
+import { TicketWithMetadata } from '../types'
 import { TicktMoreMenu } from './ticket-more-menu'
 
 type TicketItemProps = {
-  ticket: Prisma.TicketGetPayload<{
-    include: {
-      user: {
-        select: {
-          name: true
-        }
-      }
-    }
-  }> & { isOwner: boolean }
+  ticket: TicketWithMetadata
   isDetail?: boolean
   comments?: React.ReactNode
 }
