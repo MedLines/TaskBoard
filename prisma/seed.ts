@@ -1,14 +1,84 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-
 import { TicketStatus } from '../generated/prisma/enums'
 
 // --- Data Definitions ---
 
-const ADMIN_PASSWORD = 'admin@admin.com'
-const MED_PASSWORD = 'meddevlines@gmail.com'
-const ADMIN_EMAIL = 'admin@admin.com'
-const MED_EMAIL = 'meddevlines@gmail.com'
+const USERS = [
+  {
+    name: 'Alice Admin',
+    email: 'admin@admin.com',
+    password: 'admin@admin.com',
+  },
+  {
+    name: 'Bob Dev',
+    email: 'Bob@Dev.com',
+    password: 'Bob@Dev.com',
+  },
+  {
+    name: 'Charlie Designer',
+    email: 'charlie@demo.com',
+    password: 'charlie@demo.com',
+  },
+]
+
+// Frontend-focused tickets
+const TICKETS = [
+  {
+    title: 'Fix Navbar Responsiveness',
+    content: 'Menu items overlap with the logo on mobile screens (< 768px).',
+    status: TicketStatus.IN_PROGRESS,
+    bounty: 50,
+    deadlineOffset: 2,
+  },
+  {
+    title: 'Update Primary Button Styles',
+    content: 'Change the CTA button color to the new brand blue #007AFF.',
+    status: TicketStatus.OPEN,
+    bounty: 20,
+    deadlineOffset: 5,
+  },
+  {
+    title: 'Add Loading Spinner',
+    content: 'Show a loading state when fetching dashboard data to improve UX.',
+    status: TicketStatus.DONE,
+    bounty: 30,
+    deadlineOffset: 0,
+  },
+  {
+    title: 'Optimize Hero Image',
+    content: 'Convert hero image to WebP and implement lazy loading.',
+    status: TicketStatus.OPEN,
+    bounty: 40,
+    deadlineOffset: 7,
+  },
+  {
+    title: 'Implement Dark Mode Toggle',
+    content:
+      'Add a switch in the settings to toggle between light and dark themes.',
+    status: TicketStatus.IN_PROGRESS,
+    bounty: 80,
+    deadlineOffset: 10,
+  },
+]
+
+const COMMENTS = [
+  'Great idea, will pick this up.',
+  'I noticed this too, thanks for flagging.',
+  'Fixed in the latest commit.',
+  'Can we discuss the design for this?',
+  'Looks good to me!',
+  'Deployment successful.',
+  'Please review my PR.',
+  'Adding this to the sprint.',
+  'Nice catch!',
+  'I think we should prioritize this.',
+  'Is this blocking the release?',
+  'Can you provide more details?',
+  'Working on it now.',
+  'This is a duplicate of ticket #42.',
+  'Merged into main.',
+]
 
 // Helper function to create YYYY-MM-DD date strings
 const getISODate = (offsetDays: number = 0) => {
@@ -16,53 +86,6 @@ const getISODate = (offsetDays: number = 0) => {
   date.setDate(date.getDate() + offsetDays)
   return date.toISOString().split('T')[0]
 }
-
-const finalPasswords: Record<string, string> = {
-  [ADMIN_EMAIL]: ADMIN_PASSWORD,
-  [MED_EMAIL]: MED_PASSWORD,
-}
-
-const usersData = [
-  {
-    name: 'Admin',
-    email: ADMIN_EMAIL,
-  },
-  {
-    name: 'Med',
-    email: MED_EMAIL,
-  },
-]
-
-const ticketsData = [
-  {
-    title: 'Implement User Profile Feature',
-    content: 'The user needs a page to view and edit their name and email.',
-    status: TicketStatus.IN_PROGRESS,
-    deadline: getISODate(7),
-    bounty: 50,
-  },
-  {
-    title: 'Fix Header Authentication Bug',
-    content: 'The header flashes stale authentication status upon refresh.',
-    status: TicketStatus.DONE,
-    deadline: getISODate(0),
-    bounty: 10,
-  },
-  {
-    title: 'Design Ticket View UI',
-    content:
-      'Create a responsive, aesthetically pleasing design for viewing individual ticket details.',
-    status: TicketStatus.OPEN,
-    deadline: getISODate(14),
-    bounty: 40,
-  },
-]
-
-const commentsData = [
-  { content: 'First comment from DB.' },
-  { content: 'Second comment from DB.' },
-  { content: 'Third comment from DB.' },
-]
 
 // --- Seeding Function ---
 
@@ -74,97 +97,86 @@ const seed = async () => {
     // 1. Clean up existing data
     console.log('🧹 Cleaning up existing data...')
     await prisma.comment.deleteMany()
-    await prisma.user.deleteMany()
     await prisma.ticket.deleteMany()
+    await prisma.user.deleteMany()
     await prisma.session.deleteMany()
     await prisma.account.deleteMany()
     console.log('✅ Cleaned up existing data.')
 
-    // 2. Create users using Better Auth API
+    // 2. Create users
     console.log('👥 Creating users...')
+    const createdUsers = []
 
-    for (const userData of usersData) {
-      const password = finalPasswords[userData.email]
-
+    for (const userData of USERS) {
       try {
-        // Use Better Auth's signUpEmail to ensure proper password hashing
         const result = await auth.api.signUpEmail({
           body: {
             email: userData.email,
-            password: password,
+            password: userData.password,
             name: userData.name,
           },
         })
 
-        console.log(`✅ Created user: ${userData.email}`)
+        // Fetch the user back from Prisma to get the ID properly
+        const dbUser = await prisma.user.findUnique({
+          where: { email: userData.email },
+        })
+        if (dbUser) {
+          createdUsers.push(dbUser)
+          console.log(`✅ Created user: ${userData.email}`)
+        }
       } catch (error) {
         console.error(`❌ Failed to create user ${userData.email}:`, error)
-        throw error
       }
     }
 
-    // 3. Find users for linking tickets and comments
-    console.log('🔍 Finding users...')
-    const adminUser = await prisma.user.findUnique({
-      where: { email: ADMIN_EMAIL },
-    })
-    const medUser = await prisma.user.findUnique({
-      where: { email: MED_EMAIL },
-    })
-
-    if (!adminUser) {
-      throw new Error(
-        'Admin user not found after creation. Cannot link tickets.'
-      )
+    if (createdUsers.length === 0) {
+      throw new Error('No users created. Aborting.')
     }
-    if (!medUser) {
-      throw new Error(
-        'Med user not found after creation. Cannot link comments.'
+
+    // 3. Create Tickets and Comments
+    console.log('🎫 Creating tickets and comments...')
+
+    for (let i = 0; i < TICKETS.length; i++) {
+      const ticketData = TICKETS[i]
+      // Rotate ticket ownership among users
+      const ticketOwner = createdUsers[i % createdUsers.length]
+
+      const ticket = await prisma.ticket.create({
+        data: {
+          title: ticketData.title,
+          content: ticketData.content,
+          status: ticketData.status,
+          bounty: ticketData.bounty,
+          deadline: getISODate(ticketData.deadlineOffset),
+          userId: ticketOwner.id,
+        },
+      })
+
+      // Determine comment count: 10 for first and last ticket (hot topics), 3 for others
+      const commentCount = i === 0 || i === TICKETS.length - 1 ? 10 : 3
+
+      console.log(
+        `   + Ticket "${ticket.title}" created. Adding ${commentCount} comments...`
       )
+
+      for (let j = 0; j < commentCount; j++) {
+        // Pick a random user for the comment (different from owner if possible)
+        const commenter = createdUsers[(i + j + 1) % createdUsers.length]
+        const commentText = COMMENTS[(i * 3 + j) % COMMENTS.length]
+
+        await prisma.comment.create({
+          data: {
+            content: commentText,
+            ticketId: ticket.id,
+            userId: commenter.id,
+          },
+        })
+      }
     }
-    console.log(`✅ Found admin user: ${adminUser.id}`)
-    console.log(`✅ Found med user: ${medUser.id}`)
-
-    // 4. Create Tickets linked to Admin
-    console.log('🎫 Creating tickets...')
-    const ticketsWithUser = ticketsData.map((ticket) => ({
-      ...ticket,
-      userId: adminUser.id,
-    }))
-
-    await prisma.ticket.createMany({
-      data: ticketsWithUser,
-    })
-    console.log(`✅ Created ${ticketsData.length} tickets`)
-
-    // 5. Fetch created tickets to get their IDs
-    console.log('🔍 Fetching created tickets...')
-    const dbTickets = await prisma.ticket.findMany({
-      where: { userId: adminUser.id },
-      orderBy: { createdAt: 'asc' },
-    })
-    console.log(`✅ Fetched ${dbTickets.length} tickets`)
-
-    // 6. Create Comments linked to first ticket and Med user
-    console.log('💬 Creating comments...')
-    await prisma.comment.createMany({
-      data: commentsData.map((comment) => ({
-        ...comment,
-        ticketId: dbTickets[0].id,
-        userId: medUser.id,
-      })),
-    })
-    console.log(`✅ Created ${commentsData.length} comments`)
 
     const t1 = performance.now()
     console.log(`🎉 DB Seed finished successfully in ${(t1 - t0).toFixed(2)}ms`)
-    console.log('\n📋 Seed Summary:')
-    console.log(`   Users created: ${usersData.length}`)
-    console.log(`   Tickets created: ${ticketsData.length}`)
-    console.log(`   Comments created: ${commentsData.length}`)
-    console.log('\n🔐 Login Credentials:')
-    console.log(`   Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`)
-    console.log(`   Med: ${MED_EMAIL} / ${MED_PASSWORD}`)
   } catch (error) {
     console.error('❌ SEEDING ERROR:', error)
     throw error
@@ -180,5 +192,4 @@ seed()
   })
   .finally(async () => {
     await prisma.$disconnect()
-    console.log('👋 Disconnected from database')
   })
