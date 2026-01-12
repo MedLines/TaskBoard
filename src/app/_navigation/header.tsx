@@ -1,5 +1,5 @@
 'use client'
-import { LucideKanban } from 'lucide-react'
+import { LucideKanban, LucideMenu } from 'lucide-react'
 import Link from 'next/link'
 
 import { useAuth } from '@/features/auth/hooks/use-auth'
@@ -7,6 +7,12 @@ import { homePath, signInPath, signUpPath } from '@/paths'
 
 import { ThemeSwitcher } from '../../components/theme/theme-switcher'
 import { Button, buttonVariants } from '../../components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../components/ui/dropdown-menu'
 import { AccountDropdown } from './account-dropdown'
 
 const Header = () => {
@@ -20,19 +26,37 @@ const Header = () => {
     <AccountDropdown user={user} />
   ) : (
     <>
-      <Link
-        className={buttonVariants({ variant: 'outline' })}
-        href={signUpPath()}
-      >
-        Sign Up
-      </Link>
-
-      <Link
-        className={buttonVariants({ variant: 'default' })}
-        href={signInPath()}
-      >
-        Sign In
-      </Link>
+      <div className="hidden md:flex items-center gap-x-2">
+        <Link
+          className={buttonVariants({ variant: 'outline' })}
+          href={signUpPath()}
+        >
+          Sign Up
+        </Link>
+        <Link
+          className={buttonVariants({ variant: 'default' })}
+          href={signInPath()}
+        >
+          Sign In
+        </Link>
+      </div>
+      <div className="md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <LucideMenu className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={signUpPath()}>Sign Up</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={signInPath()}>Sign In</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </>
   )
 

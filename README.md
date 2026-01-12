@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskBoard
+
+TaskBoard is a modern task management application built with [Next.js](https://nextjs.org). It features a responsive design, user authentication, and a kanban-style interface for managing tickets and projects.
+
+This project is bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
